@@ -65,10 +65,10 @@ const
 
 const
   RFCOMM_MAX_DEV* = 256
-  RFCOMMCREATEDEV* = IOW(ord('R'), 200, int)
-  RFCOMMRELEASEDEV* = IOW(ord('R'), 201, int)
-  RFCOMMGETDEVLIST* = IOR(ord('R'), 210, int)
-  RFCOMMGETDEVINFO* = IOR(ord('R'), 211, int)
+  RFCOMMCREATEDEV* = IOW(ord('R'), 200, cint)
+  RFCOMMRELEASEDEV* = IOW(ord('R'), 201, cint)
+  RFCOMMGETDEVLIST* = IOR(ord('R'), 210, cint)
+  RFCOMMGETDEVINFO* = IOR(ord('R'), 211, cint)
 
 type
   rfcomm_dev_req* = object
