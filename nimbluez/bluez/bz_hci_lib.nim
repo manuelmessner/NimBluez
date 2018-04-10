@@ -243,16 +243,25 @@ proc lmp_strtover*(str: cstring; ver: ptr cuint): cint {.cdecl,
     importc: "lmp_strtover", dynlib: "libbluetooth.so".}
 proc lmp_featurestostr*(features: ptr uint8; pref: cstring; width: cint): cstring {.
     cdecl, importc: "lmp_featurestostr", dynlib: "libbluetooth.so".}
+
+# These templates are for readability reasons only
+template `|=`(a: untyped; b: untyped): untyped =
+  a = a or b
+template `&=`(a: untyped; b: untyped): untyped =
+  a = a and b
+template ptr_arr(`addr`: pointer; off: typed; `type`: untyped): untyped =
+  cast[ptr `type`](cast[uint](`addr`) + `type`(`type`.sizeof * off))
+
 proc hci_set_bit*(nr: cint; `addr`: pointer) {.inline, cdecl.} =
-  cast[ptr uint32](cast[int](`addr`) + (nr shr 5))[] =
-    uint32(int(cast[ptr uint32](cast[int](`addr`) + (nr shr 5))[]) or (1 shl (nr and 31)))
+  ptr_arr(`addr`, nr shr 5, uint32)[] |= (1'u32 shl (nr and 31))
 
 proc hci_clear_bit*(nr: cint; `addr`: pointer) {.inline, cdecl.} =
-  cast[ptr uint32](cast[int](`addr`) + (nr shr 5))[] =
-    uint32(int(cast[ptr uint32](cast[int](`addr`) + (nr shr 5))[]) and not (1 shl (nr and 31)))
+  # TODO: test
+  ptr_arr(`addr`, nr shr 5, uint32)[] &= not (1'u32 shl (nr and 31))
 
 proc hci_test_bit*(nr: cint; `addr`: pointer): cint {.inline, cdecl.} =
-  return cint(int(cast[ptr uint32](cast[int](`addr`) + (nr shr 5))[]) and (1 shl (nr and 31)))
+  # TODO: test
+  cint(ptr_arr(`addr`, nr shr 5, uint32)[] and (1'u32 shl (nr and 31)))
 
 # HCI filter tools
 
